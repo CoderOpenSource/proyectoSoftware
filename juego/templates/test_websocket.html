@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Test</title>
+</head>
+<body>
+    <h1>WebSocket Test</h1>
+    <script>
+        const roomName = "testroom";
+        const ws = new WebSocket('ws://' + window.location.host + '/ws/game/' + roomName + '/');
+
+        ws.onopen = function() {
+            console.log('WebSocket is open now.');
+            ws.send(JSON.stringify({'message': 'Hello WebSocket!'}));
+        };
+
+        ws.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            console.log('Message received: ', data);
+        };
+
+        ws.onclose = function() {
+            console.log('WebSocket is closed now.');
+        };
+
+        ws.onerror = function(error) {
+            console.log('WebSocket error: ' + error);
+        };
+    </script>
+</body>
+</html>

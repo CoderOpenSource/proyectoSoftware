@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Test</title>
+</head>
+<body>
+    <h1>WebSocket Test</h1>
+    <input type="text" id="messageInput" placeholder="Type a message...">
+    <button onclick="sendMessage()">Send Message</button>
+    <ul id="messages"></ul>
+
+    <script>
+        const ws = new WebSocket('ws://' + window.location.host + '/ws/online_status/');
+
+        ws.onopen = function() {
+            console.log('WebSocket is open now.');
+            // Enviar un mensaje inicial al conectarse
+            ws.send(JSON.stringify({'message': 'User connected'}));
+        };
+
+        ws.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            console.log('Message received: ', data);
+            // Mostrar el mensaje recibido en la página
+            const messages = document.getElementById('messages');
+            const li = document.createElement('li');
+            li.textContent = data.message;
+            messages.appendChild(li);
+        };
+
+        ws.onclose = function() {
+            console.log('WebSocket is closed now.');
+        };
+
+        ws.onerror = function(error) {
+            console.log('WebSocket error: ' + error);
+        };
+
+        window.onbeforeunload = function() {
+            // Enviar un mensaje cuando la ventana se cierra
+            ws.send(JSON.stringify({'message': 'User disconnected'}));
+        };
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value;
+            // Enviar el mensaje ingresado por el usuario
+            ws.send(JSON.stringify({'message': message}));
+            input.value = '';
+        }
+    </script>
+</body>
+</html>
